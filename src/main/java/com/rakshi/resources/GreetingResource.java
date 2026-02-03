@@ -1,4 +1,4 @@
-package com.rakshi;
+package com.rakshi.resources;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

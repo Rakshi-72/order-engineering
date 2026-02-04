@@ -3,31 +3,39 @@ package com.rakshi.domains;
 import java.time.Instant;
 import java.util.UUID;
 
+import lombok.Getter;
+
 /**
  * A single flight segment inside an Order.
  *
- * <p>Multi-leg trips (LHR→CDG→JFK) are modelled as multiple FlightItems in the
- * same Order — one per segment.  They are linked by belonging to the same Order,
- * not by a separate itinerary object (we can add that grouping later if needed).</p>
+ * <p>
+ * Multi-leg trips (LHR→CDG→JFK) are modelled as multiple FlightItems in the
+ * same Order — one per segment. They are linked by belonging to the same Order,
+ * not by a separate itinerary object (we can add that grouping later if
+ * needed).
+ * </p>
  *
- * <p>Fields are intentionally <b>immutable</b> after construction.  If a flight
- * changes, the correct domain action is: cancel this item, create a new one.</p>
+ * <p>
+ * Fields are intentionally <b>immutable</b> after construction. If a flight
+ * changes, the correct domain action is: cancel this item, create a new one.
+ * </p>
  */
+@Getter
 public class FlightItem extends OrderItem {
 
-    private final String  origin;
-    private final String  destination;
-    private final String  flightNumber;
+    private final String origin;
+    private final String destination;
+    private final String flightNumber;
     private final Instant departureTime;
-    private final Instant arrivalTime;       // nullable — we may not always know it upfront
+    private final Instant arrivalTime; // nullable — we may not always know it upfront
 
     // -----------------------------------------------------------------
-    // Construction  (private — use Builder)
+    // Construction (private — use Builder)
     // -----------------------------------------------------------------
 
     private FlightItem(UUID itemId, ItemStatus status, Price price,
-                       String origin, String destination,
-                       String flightNumber, Instant departureTime, Instant arrivalTime) {
+            String origin, String destination,
+            String flightNumber, Instant departureTime, Instant arrivalTime) {
         super(itemId, status, price);
 
         if (origin == null || origin.isBlank() || origin.length() != 3)
@@ -43,51 +51,98 @@ public class FlightItem extends OrderItem {
         if (arrivalTime != null && !arrivalTime.isAfter(departureTime))
             throw new IllegalArgumentException("arrivalTime must be after departureTime.");
 
-        this.origin        = origin.toUpperCase();
-        this.destination   = destination.toUpperCase();
-        this.flightNumber  = flightNumber;
+        this.origin = origin.toUpperCase();
+        this.destination = destination.toUpperCase();
+        this.flightNumber = flightNumber;
         this.departureTime = departureTime;
-        this.arrivalTime   = arrivalTime;
+        this.arrivalTime = arrivalTime;
     }
 
     // -----------------------------------------------------------------
     // Accessors
     // -----------------------------------------------------------------
 
-    public String  getOrigin()        { return origin; }
-    public String  getDestination()   { return destination; }
-    public String  getFlightNumber()  { return flightNumber; }
-    public Instant getDepartureTime() { return departureTime; }
-    public Instant getArrivalTime()   { return arrivalTime; }
+    public String getOrigin() {
+        return origin;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public Instant getDepartureTime() {
+        return departureTime;
+    }
+
+    public Instant getArrivalTime() {
+        return arrivalTime;
+    }
 
     // -----------------------------------------------------------------
     // Builder
     // -----------------------------------------------------------------
 
     public static class Builder {
-        private UUID      itemId        = newItemId();
-        private ItemStatus status       = ItemStatus.ACTIVE;
-        private Price      price;
-        private String     origin;
-        private String     destination;
-        private String     flightNumber;
-        private Instant    departureTime;
-        private Instant    arrivalTime;
+        private UUID itemId = newItemId();
+        private ItemStatus status = ItemStatus.ACTIVE;
+        private Price price;
+        private String origin;
+        private String destination;
+        private String flightNumber;
+        private Instant departureTime;
+        private Instant arrivalTime;
 
-        public Builder itemId(UUID itemId)                   { this.itemId        = itemId;        return this; }
-        public Builder status(ItemStatus status)             { this.status        = status;        return this; }
-        public Builder price(Price price)                    { this.price         = price;         return this; }
-        public Builder origin(String origin)                 { this.origin        = origin;        return this; }
-        public Builder destination(String destination)       { this.destination   = destination;   return this; }
-        public Builder flightNumber(String flightNumber)     { this.flightNumber  = flightNumber;  return this; }
-        public Builder departureTime(Instant departureTime)  { this.departureTime = departureTime; return this; }
-        public Builder arrivalTime(Instant arrivalTime)      { this.arrivalTime   = arrivalTime;   return this; }
+        public Builder itemId(UUID itemId) {
+            this.itemId = itemId;
+            return this;
+        }
+
+        public Builder status(ItemStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder price(Price price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder origin(String origin) {
+            this.origin = origin;
+            return this;
+        }
+
+        public Builder destination(String destination) {
+            this.destination = destination;
+            return this;
+        }
+
+        public Builder flightNumber(String flightNumber) {
+            this.flightNumber = flightNumber;
+            return this;
+        }
+
+        public Builder departureTime(Instant departureTime) {
+            this.departureTime = departureTime;
+            return this;
+        }
+
+        public Builder arrivalTime(Instant arrivalTime) {
+            this.arrivalTime = arrivalTime;
+            return this;
+        }
 
         public FlightItem build() {
             return new FlightItem(itemId, status, price, origin, destination,
-                                  flightNumber, departureTime, arrivalTime);
+                    flightNumber, departureTime, arrivalTime);
         }
     }
 
-    public static Builder builder() { return new Builder(); }
+    public static Builder builder() {
+        return new Builder();
+    }
 }

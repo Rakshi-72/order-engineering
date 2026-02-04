@@ -1,4 +1,6 @@
-package com.rakshi.domains;
+package com.rakshi;
+
+import com.rakshi.domains.*;
 
 import java.time.Instant;
 import java.util.Currency;
@@ -20,7 +22,7 @@ public class Main {
         // 1.  Create an Order via the repository (handles ID uniqueness)
         // =====================================================================
         OrderRepository repo  = new OrderRepository();
-        Order           order = repo.save(
+        Order order = repo.save(
                 Order.builder()
                         .customerId("CUST-98234")
                         .customerEmail("jane.doe@email.com")
